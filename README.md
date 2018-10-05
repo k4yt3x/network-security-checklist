@@ -44,8 +44,11 @@ You should match this section against all operating systems.
 - [ ] Set DsrmAdminLogonBehavior = 1 (force stop AD for DSRM logon)
 - [ ] Enable UNC hardening (MS15-011)
 - [ ] No computer accounts in admin groups
-- [ ] List all Domain Administrators
-- [ ] Check AdminSDHolder objects
+- [ ] Identify who has AD admin rights (domain/forest)
+- [ ] Identify who can logon to Domain Controllers (and admin rights to virtual environment hosting virtual DCs)
+- [ ] Scan ADs, OUs, AdminSDHolder, and GPOs for inappropriate custom permissions
+- [ ] Ensure AD administrators (Domain Admins) protect their credentials by not logging into untrusted systems (workstations).
+- [ ] Limit service account rights that are currently DA (or equivalent).
 - [ ] Enable compound authentication
 - [ ] Enable Dynamic access control
 - [ ] Check [LSA protection](https://docs.microsoft.com/en-us/windows-server/security/credentials-protection-and-management/configuring-additional-lsa-protection)
@@ -181,7 +184,14 @@ By default, Windows detects web proxies and tries to log in with the currently-l
 
 ### Active Directory
 
-- AD objects are not deleted.
+- All authenticated users have read access to:
+    - Most (all) objects & their attributes in AD (even across trusts).
+    - Most (all) contents in the domain share "SYSVOL" which can contain interesting scripts & files.
+- A standard user account can:
+    - Have elevated rights through the magic of "SID History" without being a member of any groups.
+    - Have the ability to modify users/groups without elevated rights through custom OU permissions.
+    - Compromise an entire AD domain simply by improperly being granted modify rights to an OU or domain-linked GPO.
+- AD objects are not deleted when removed from the list.
 - AD forest is the security boundary.
 - All AD information stays in the boundary.
 - All domains within the forest implicitly trust each other through automatic trust of the parent and the child domain.
