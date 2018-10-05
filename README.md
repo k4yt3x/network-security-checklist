@@ -12,7 +12,7 @@ You should match this section against all operating systems.
 - [ ] Implement proper least privilege
 - [ ] Run a layered endpoint defense strategy
 - [ ] Enforce complex passwords
-- [ ] If no application protecting IPv6, disable IPv6
+- [ ] If no application protecting IPv6, disable IPv6 [[1]]
 - [ ] Enable password rotation
 - [ ] Disable user accounts after login failures
 - [ ] Use dual factor authentication if possible
@@ -21,22 +21,29 @@ You should match this section against all operating systems.
 
 ## Windows
 
-- [ ] Remove PowerShell v2
+- [ ] Remove PowerShell v2 [[2]]
 - [ ] Limit execution of script content (WSH)
     - [ ] Constrained language
     - [ ] block powershell interpreter
 - [ ] Enable system wide transcript files
 - [ ] Restrict macro execution
 - [ ] Disable local administrator accounts
-- [ ] Disable NTLM (use kerberos)
+- [ ] Disable NTLM [[3]]
+- [ ] Enable Kerberos with AES encryption
 - [ ] Disable SMBv1
 - [ ] Enable SMB signing
 - [ ] Deploy Microsoft [LAPS](https://technet.microsoft.com/en-us/mt227395.aspx)
 - [ ] Disabled [LLMNR](https://en.wikipedia.org/wiki/Link-Local_Multicast_Name_Resolution)
 - [ ] Disable [NetBIOS-NS](https://en.wikipedia.org/wiki/NetBIOS)
 - [ ] Disable WDigest and caching of cleartext credentials
-- [ ] Create an entry for [WPAD](https://en.wikipedia.org/wiki/Web_Proxy_Auto-Discovery_Protocol) deweaponize poisoning
+- [ ] Create an entry for [WPAD](https://en.wikipedia.org/wiki/Web_Proxy_Auto-Discovery_Protocol) deweaponize poisoning [[4]]
 - [ ] Limit use of privileged accounts to only manage explicit privileged machines
+- [ ] Make use of Read-Only Domain Controllers ([RODC](https://docs.microsoft.com/en-us/windows/desktop/ad/rodc-and-active-directory-schema)) [[5]]
+- [ ] Change DSRM account password or create DSRM account on DC
+- [ ] Set DsrmAdminLogonBehavior = 1 (force stop AD for DSRM logon)
+- [ ] Enable UNC hardening (MS15-011)
+- [ ] No computer accounts in admin groups
+- [ ] List all Domain Administrators
 
 ## Linux
 
@@ -47,8 +54,8 @@ You should match this section against all operating systems.
 - [ ] Login whitelist
 - [ ] SSHv2 enabled
 - [ ] Deny users from using Cronjobs
-- [ ] enable SELinux
-- [ ] Enable iptables (ufw)
+- [ ] enable `SELinux`
+- [ ] Enable `iptables` (`ufw`)
 - [ ] Disable Ctrl+Alt+Delete in `/etc/inittab`
 - [ ] Disable interactive hotkey startup at boot
 - [ ] Check accounts for empty passwords
@@ -73,3 +80,142 @@ You should match this section against all operating systems.
 - [ ] STP Enabled
 - [ ] VLAN configured properly
 - [ ] Segregate legacy technology
+
+## Explainations
+
+### IPv6
+
+When implementing IPv6 on a network, remember a basic principle: **you need to configure security for IPv4 and IPv6 separately**. For example, if ACL is deployed on the router for IPv6, it does not apply for IPv6.
+
+Configure ACL (deny all pings).
+
+```
+(config)#access-list 100 deny icmp any any echo
+```
+
+Apply ACL to interface GigabitEthernet 0/0. Note how you have to apply ACL to both IPv4 and IPv6 on both directions.
+
+```
+(config)#ip access-group 100 in
+(config)#ip access-group 100 out
+(config)#ipv6 access-group 100 in
+(config)#ipv6 access-group 100 out
+```
+
+### PowerShell V2
+
+Even if powershell is disabled
+
+### NTLM and Kerberos
+
+NTLM is how Windows stores passwords and authenticates. It uses MD4 to store passwords. Network authentication uses the hash, but not the original password. This makes NTLM vulnerable to NTLM relaying. By relaying the authentication request to a rogue server, the target machine will attempt to log in into the server, without verifying the identity of the server. Then, the rogue server can relay the authentication requests to a target server, thus gaining access to the server.
+
+#### Weaknesses
+
+|NTLM|Kerberos|
+|-|-|
+|Typically mix of NTLM v1 & v2|Supported encryption types|
+|Encryption: DES or MD4 or HMAC-MD5|RC4 Encryption = NTLM Hash|
+|No mutual authentication|Compromise of TLK = compromise of Kerberos|
+|Hash used behind the scenes|Stolen credentials reusable until ticket expires|
+|Stolen credentials reusable until password changed|TGS PAC validation not typically performed|
+|Credentials can be "leaked" via web browser||
+
+#### NLM Attacks
+
+- SMB Relay - simulate SMB server or relay to attacker system
+- Intranet HTTP NTLM auth - relay to rogue server
+- NBNS/LLMNR - respond to NetBIOS broadcasts
+- HTTP - SMB NTLM relay
+- WPAD - network proxy
+- ZackAttack - SOCKS proxy, SMB/HTTP, LDAP, etc.
+- Pass the Hash (PtH)
+
+Services that NTLM will attempt to login automatically:
+
+- SMB
+- HTTP (Exchange Web Services)
+- LDAP
+- MSSQL
+
+#### Kerberos Attacks
+
+- Replay attacks
+- Pass the Ticket (reuse tickets)
+- Over-pass the hash (pass the key)
+- Offline (user) password cracking (Kerberoast)
+- Forged tickets - Golden/Silver
+- Diamond PAC
+- MS14-068
+
+### WPAD
+
+By default, Windows detects web proxies and tries to log in with the currently-logged-in user's credentials. This might cause leakage of HTTP credentials, and should be disabled.
+
+### RODC
+
+- DC services without storing passwords.
+- Only receives inbound replication from writable DCs.
+- Requires cached passwords for local site authentication.
+- Enables delegation of RODC administration to non AD admin.
+- Use cases:
+    - Physical security issues.
+    - Third party software install on DC.
+    - "Untrusted admin" scenario.
+
+## Supplemental Information
+
+### Active Directory
+
+- AD objects are not deleted.
+- AD forest is the security boundary.
+- All AD information stays in the boundary.
+- All domains within the forest implicitly trust each other through automatic trust of the parent and the child domain.
+- Domain is a partition of the forest.
+- Trust can exist between forests.
+- **Federation** is more secure than trust. It creates a ticket for every authenticated request, thus preventing unauthorized access.
+- No security policy = default (minimum).
+- DCs need additional security policies (GPO).
+- Windows systems (DC) need to be configured for enhanced auditing.
+
+#### Groups with AD Admin Rights
+
+- Domain Admins
+- Enterprise Admins
+- Domain "Administrators"
+- Custom Delegation at domain/OU level
+- Groups with DC logon rights
+
+#### Group Policy
+
+- User & computer management
+- Create GPO & link to OU
+- Comprised of:
+    - Group Policy Object (GPO) in AD
+    - Group Policy Template (GPT) files in SYSVOL
+    - Group Policy Client Side Extensions on clients
+
+#### AD Asset Discovery
+
+- Domain Controllers
+- Exchange Servers
+- SCCM
+- DFS Shares
+
+### Microsoft Password & Active Directory
+
+- TPM generates user public-private key pair (public key added to AD user attribute).
+- User credential device-specific secrets stored in VSM.
+- Machine data & user credential info combined & sent to DC for user TGT.
+- Cred Guard owns system private key used to get TGT.
+
+### Useful Links
+
+- [DEFCON 20: Owned in 60 Seconds: From Network Guest to Windows Domain Admin](https://www.youtube.com/watch?v=nHU3ujyw_sQ)
+- [Beyond the Mcse: Active Directory for the Security Professional](https://www.youtube.com/watch?v=2w1cesS7pGY)
+
+[1]: https://github.com/K4YT3X/network-security-checklist#ipv6
+[2]: https://github.com/K4YT3X/network-security-checklist#powershell-v2
+[3]: https://github.com/K4YT3X/network-security-checklist#ntlm-and-kerberos
+[4]: https://github.com/K4YT3X/network-security-checklist#wpad
+[5]: https://github.com/K4YT3X/network-security-checklist#rodc
