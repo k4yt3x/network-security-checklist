@@ -33,6 +33,7 @@ You should match this section against all operating systems.
 - [ ] Disable SMBv1
 - [ ] Enable SMB signing
 - [ ] Deploy Microsoft [LAPS](https://technet.microsoft.com/en-us/mt227395.aspx)
+- [ ] Use fine grained password policy
 - [ ] Disabled [LLMNR](https://en.wikipedia.org/wiki/Link-Local_Multicast_Name_Resolution)
 - [ ] Disable [NetBIOS-NS](https://en.wikipedia.org/wiki/NetBIOS)
 - [ ] Disable WDigest and caching of cleartext credentials
@@ -44,6 +45,13 @@ You should match this section against all operating systems.
 - [ ] Enable UNC hardening (MS15-011)
 - [ ] No computer accounts in admin groups
 - [ ] List all Domain Administrators
+- [ ] Check AdminSDHolder objects
+- [ ] Enable compound authentication
+- [ ] Enable Dynamic access control
+- [ ] Check [LSA protection](https://docs.microsoft.com/en-us/windows-server/security/credentials-protection-and-management/configuring-additional-lsa-protection)
+- [ ] Add administrator accounts to "Protected Users" security group
+- [ ] Configure Just Enough Administration ([JEA](https://docs.microsoft.com/en-us/powershell/jea/overview))
+- [ ] Enable Privileged Access Management feature
 
 ## Linux
 
@@ -108,6 +116,8 @@ Even if powershell is disabled
 
 ### NTLM and Kerberos
 
+- [Network security: Restrict NTLM: Audit NTLM authentication in this domain](https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/network-security-restrict-ntlm-audit-ntlm-authentication-in-this-domain)
+
 NTLM is how Windows stores passwords and authenticates. It uses MD4 to store passwords. Network authentication uses the hash, but not the original password. This makes NTLM vulnerable to NTLM relaying. By relaying the authentication request to a rogue server, the target machine will attempt to log in into the server, without verifying the identity of the server. Then, the rogue server can relay the authentication requests to a target server, thus gaining access to the server.
 
 #### Weaknesses
@@ -164,6 +174,10 @@ By default, Windows detects web proxies and tries to log in with the currently-l
     - "Untrusted admin" scenario.
 
 ## Supplemental Information
+
+### PowerSploit
+
+[PoewrSploit](https://github.com/PowerShellMafia/PowerSploit) is a collection of Microsoft PowerShell modules that can be used to aid penetration testers during all phases of an assessment.
 
 ### Active Directory
 
