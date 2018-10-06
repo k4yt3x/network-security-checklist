@@ -201,6 +201,7 @@ By default, Windows detects web proxies and tries to log in with the currently-l
 - No security policy = default (minimum).
 - DCs need additional security policies (GPO).
 - Windows systems (DC) need to be configured for enhanced auditing.
+- You can query DNS through LDAP.
 
 #### Groups with AD Admin Rights
 
