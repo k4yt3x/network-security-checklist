@@ -5,7 +5,7 @@
 - [Windows](#Windows)
 - [Linux](#Linux)
 - [Networking](#Networking)
-- [Explainations](#Explainations)
+- [Explanations](#Explanations)
   - [IPv6](#IPv6)
   - [PowerShell V2](#PowerShell-V2)
   - [NTLM and Kerberos](#NTLM-and-Kerberos)
@@ -46,8 +46,8 @@ You should match this section against all operating systems.
 
 - [ ] Remove PowerShell v2 [[2]]
 - [ ] Limit execution of script content (WSH)
-    - [ ] Constrained language
-    - [ ] block powershell interpreter
+  - [ ] Constrained language
+  - [ ] block powershell interpreter
 - [ ] Enable system wide transcript files
 - [ ] Restrict macro execution
 - [ ] Disable local administrator accounts
@@ -115,7 +115,7 @@ You should match this section against all operating systems.
 - [ ] VLAN configured properly
 - [ ] Segregate legacy technology
 
-## Explainations
+## Explanations
 
 ### IPv6
 
@@ -138,7 +138,7 @@ Apply ACL to interface GigabitEthernet 0/0. Note how you have to apply ACL to bo
 
 ### PowerShell V2
 
-Even if powershell is disabled
+Even if powershell is disabled **TODO**
 
 ### NTLM and Kerberos
 
@@ -195,9 +195,9 @@ By default, Windows detects web proxies and tries to log in with the currently-l
 - Requires cached passwords for local site authentication.
 - Enables delegation of RODC administration to non AD admin.
 - Use cases:
-    - Physical security issues.
-    - Third party software install on DC.
-    - "Untrusted admin" scenario.
+  - Physical security issues.
+  - Third party software install on DC.
+  - "Untrusted admin" scenario.
 
 ## Supplemental Information
 
@@ -208,12 +208,12 @@ By default, Windows detects web proxies and tries to log in with the currently-l
 ### Active Directory
 
 - All authenticated users have read access to:
-    - Most (all) objects & their attributes in AD (even across trusts).
-    - Most (all) contents in the domain share "SYSVOL" which can contain interesting scripts & files.
+  - Most (all) objects & their attributes in AD (even across trusts).
+  - Most (all) contents in the domain share "SYSVOL" which can contain interesting scripts & files.
 - A standard user account can:
-    - Have elevated rights through the magic of "SID History" without being a member of any groups.
-    - Have the ability to modify users/groups without elevated rights through custom OU permissions.
-    - Compromise an entire AD domain simply by improperly being granted modify rights to an OU or domain-linked GPO.
+  - Have elevated rights through the magic of "SID History" without being a member of any groups.
+  - Have the ability to modify users/groups without elevated rights through custom OU permissions.
+  - Compromise an entire AD domain simply by improperly being granted modify rights to an OU or domain-linked GPO.
 - AD objects are not deleted when removed from the list.
 - AD forest is the security boundary.
 - All AD information stays in the boundary.
@@ -239,9 +239,9 @@ By default, Windows detects web proxies and tries to log in with the currently-l
 - User & computer management
 - Create GPO & link to OU
 - Comprised of:
-    - Group Policy Object (GPO) in AD
-    - Group Policy Template (GPT) files in SYSVOL
-    - Group Policy Client Side Extensions on clients
+  - Group Policy Object (GPO) in AD
+  - Group Policy Template (GPT) files in SYSVOL
+  - Group Policy Client Side Extensions on clients
 
 #### AD Asset Discovery
 
