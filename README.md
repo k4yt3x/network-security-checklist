@@ -57,7 +57,7 @@ You should match this section against all operating systems.
 - [ ] Enable SMB signing
 - [ ] Deploy Microsoft [LAPS](https://technet.microsoft.com/en-us/mt227395.aspx)
 - [ ] Use fine grained password policy
-- [ ] Disabled [LLMNR](https://en.wikipedia.org/wiki/Link-Local_Multicast_Name_Resolution)
+- [ ] Disable [LLMNR](https://en.wikipedia.org/wiki/Link-Local_Multicast_Name_Resolution)
 - [ ] Disable [NetBIOS-NS](https://en.wikipedia.org/wiki/NetBIOS)
 - [ ] Disable WDigest and caching of cleartext credentials
 - [ ] Create an entry for [WPAD](https://en.wikipedia.org/wiki/Web_Proxy_Auto-Discovery_Protocol) deweaponize poisoning [[4]]
