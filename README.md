@@ -1,27 +1,27 @@
 # Network Security Checklist<!-- omit in toc -->
 
-- [Abstract](#Abstract)
-- [All OS](#All-OS)
-- [Windows](#Windows)
-- [Linux](#Linux)
-- [Networking](#Networking)
-- [Explanations](#Explanations)
-  - [IPv6](#IPv6)
-  - [PowerShell V2](#PowerShell-V2)
-  - [NTLM and Kerberos](#NTLM-and-Kerberos)
-    - [Weaknesses](#Weaknesses)
-    - [NLM Attacks](#NLM-Attacks)
-    - [Kerberos Attacks](#Kerberos-Attacks)
-  - [WPAD](#WPAD)
-  - [RODC](#RODC)
-- [Supplemental Information](#Supplemental-Information)
-  - [PowerSploit](#PowerSploit)
-  - [Active Directory](#Active-Directory)
-    - [Groups with AD Admin Rights](#Groups-with-AD-Admin-Rights)
-    - [Group Policy](#Group-Policy)
-    - [AD Asset Discovery](#AD-Asset-Discovery)
-  - [Microsoft Password & Active Directory](#Microsoft-Password--Active-Directory)
-  - [Useful Links](#Useful-Links)
+- [Abstract](#abstract)
+- [All OS](#all-os)
+- [Windows](#windows)
+- [Linux](#linux)
+- [Networking](#networking)
+- [Explanations](#explanations)
+  - [IPv6](#ipv6)
+  - [PowerShell V2](#powershell-v2)
+  - [NTLM and Kerberos](#ntlm-and-kerberos)
+    - [Weaknesses](#weaknesses)
+    - [NLM Attacks](#nlm-attacks)
+    - [Kerberos Attacks](#kerberos-attacks)
+  - [WPAD](#wpad)
+  - [RODC](#rodc)
+- [Supplemental Information](#supplemental-information)
+  - [PowerSploit](#powersploit)
+  - [Active Directory](#active-directory)
+    - [Groups with AD Admin Rights](#groups-with-ad-admin-rights)
+    - [Group Policy](#group-policy)
+    - [AD Asset Discovery](#ad-asset-discovery)
+  - [Microsoft Password &amp; Active Directory](#microsoft-password-amp-active-directory)
+  - [Useful Links](#useful-links)
 
 ## Abstract
 
@@ -76,7 +76,7 @@ You should match this section against all operating systems.
 - [ ] Enable Dynamic access control
 - [ ] Check [LSA protection](https://docs.microsoft.com/en-us/windows-server/security/credentials-protection-and-management/configuring-additional-lsa-protection)
 - [ ] Add administrator accounts to "Protected Users" security group
-- [ ] Configure Just Enough Administration ([JEA](https://docs.microsoft.com/en-us/powershell/jea/overview))
+- [ ] Configure Just Enough Administration ([JEA](https://docs.microsoft.com/en-us/powershell/scripting/learn/remoting/jea/overview))
 - [ ] Enable Privileged Access Management feature
 
 ## Linux
